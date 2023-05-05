@@ -25,8 +25,9 @@
 LIBS    = -lm -lX11 -lpthread -lrt
 LDFLAGS = -s -L/usr/lib
 INCL    = -I/usr/include/X11
+EXTRACFLAGS = -Wno-switch -Wno-format-security
 
-CFLAGS  = -O2 -I. $(INCL) -std=gnu99 -march=native -mcpu=native -mtune=native -Q -v
+CFLAGS  = -O3 -I. $(INCL) $(EXTRACFLAGS) -std=gnu99 -march=native -mcpu=native -mtune=native
 
 HDRS    =   const.h                 \
             cyber_channel_linux.h   \
