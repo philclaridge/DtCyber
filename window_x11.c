@@ -287,6 +287,56 @@ void windowTerminate(void)
  **--------------------------------------------------------------------------
  */
 
+// Work in progress - don't pull into another repo
+
+#define XMargin 0
+#define XMultScale 24
+#define XDivScale  32
+#define YMargin 5
+#define YMultScale 23
+#define YDivScale  32
+#define DisplayGapAdjust -30
+#define DefaultScreenWidth  800
+#define DefaultScreenHeight  400
+
+/*
+ * Default set
+#define XMargin 0
+#define XMultScale 1
+#define XDivScale  1
+#define YMargin 20
+#define YMultScale 14
+#define YDivScale  10
+#define DisplayGapAdjust 0
+#define DefaultScreenWidth  1100
+#define DefaultScreenHeight  750
+*/
+
+// default unity
+u16 scaleX(u16 x)
+    {
+    if (x < OffRightScreen)
+        {
+            return ((x * XMultScale) / XDivScale) + XMargin;
+        }
+
+    return (((x + (DisplayGapAdjust)) * XMultScale) / XDivScale) + XMargin;
+    }
+
+
+u16 scaleY(u16 y)
+    {
+    return ((y * YMultScale ) / YDivScale ) + YMargin;
+    }
+
+void screenExtentMarkers(GC gc, Pixmap pixmap, u16 xOffset, u16 yOffset)
+    {
+    XDrawPoint(disp, pixmap, gc, scaleX(xOffset), scaleY(yOffset));
+    XDrawPoint(disp, pixmap, gc, scaleX(xOffset), scaleY(yOffset + 0777));
+    XDrawPoint(disp, pixmap, gc, scaleX(xOffset + 0777), scaleY(yOffset));
+    XDrawPoint(disp, pixmap, gc, scaleX(xOffset + 0777), scaleY(yOffset + 0777));
+    }
+
 /*--------------------------------------------------------------------------
 **  Purpose:        Windows thread.
 **
@@ -341,8 +391,8 @@ void *windowThread(void *param)
     /*
     **  Create a window using the following hints.
     */
-    width  = 1100;
-    height = 750;
+    width  = DefaultScreenWidth;
+    height = DefaultScreenHeight;
 
     bg = BlackPixel(disp, screen);
     fg = WhitePixel(disp, screen);
@@ -384,9 +434,12 @@ void *windowThread(void *param)
     /*
     **  Load three Cyber fonts.
     */
-    hSmallFont  = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-10-*-*-*-*-*-*-*\0");
-    hMediumFont = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-14-*-*-*-*-*-*-*\0");
-    hLargeFont  = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-24-*-*-*-*-*-*-*\0");
+
+    // 10 14 24 lucidatypewriter
+    // xorg-fonts-misc-otb
+    hSmallFont  = XLoadFont(disp, "-*-fixed-medium-*-*-*-6-*-*-*-*-*-*-*\0");
+    hMediumFont = XLoadFont(disp, "-*-fixed-medium-*-*-*-12-*-*-*-*-*-*-*\0");
+    hLargeFont  = XLoadFont(disp, "-*-fixed-medium-*-*-*-20-*-*-*-*-*-*-*\0");
 
     /*
     **  Setup fore- and back-ground colors.
@@ -757,14 +810,17 @@ void *windowThread(void *param)
             */
             if (curr->fontSize == FontDot)
                 {
-                XDrawPoint(disp, pixmap, gc, curr->xPos, (curr->yPos * 14) / 10 + 20);
+                XDrawPoint(disp, pixmap, gc, scaleX(curr->xPos), scaleY(curr->yPos));
                 }
             else
                 {
                 str[0] = curr->ch;
-                XDrawString(disp, pixmap, gc, curr->xPos, (curr->yPos * 14) / 10 + 20, str, 1);
+                XDrawString(disp, pixmap, gc, scaleX(curr->xPos), scaleY(curr->yPos), str, 1);
                 }
             }
+
+        screenExtentMarkers(gc, pixmap, OffLeftScreen, 0);
+        screenExtentMarkers(gc, pixmap, OffRightScreen, 0);
 
         listEnd  = 0;
         currentX = -1;
@@ -805,5 +861,6 @@ void *windowThread(void *param)
     XCloseDisplay(disp);
     pthread_exit(NULL);
     }
+
 
 /*---------------------------  End Of File  ------------------------------*/
