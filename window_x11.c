@@ -293,11 +293,11 @@ void windowTerminate(void)
 #define XMultScale 24
 #define XDivScale  32
 #define YMargin 5
-#define YMultScale 23
+#define YMultScale 29
 #define YDivScale  32
 #define DisplayGapAdjust -30
-#define DefaultScreenWidth  800
-#define DefaultScreenHeight  400
+#define DefaultScreenWidth  794
+#define DefaultScreenHeight  474
 
 /*
  * Default set
@@ -435,11 +435,11 @@ void *windowThread(void *param)
     **  Load three Cyber fonts.
     */
 
-    // 10 14 24 lucidatypewriter
+    // 10 14 24 lucidatypewriter fixed
     // xorg-fonts-misc-otb
-    hSmallFont  = XLoadFont(disp, "-*-fixed-medium-*-*-*-6-*-*-*-*-*-*-*\0");
-    hMediumFont = XLoadFont(disp, "-*-fixed-medium-*-*-*-12-*-*-*-*-*-*-*\0");
-    hLargeFont  = XLoadFont(disp, "-*-fixed-medium-*-*-*-20-*-*-*-*-*-*-*\0");
+    hSmallFont  = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-8-*-*-*-*-*-*-*\0");
+    hMediumFont = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-*-*\0");
+    hLargeFont  = XLoadFont(disp, "-*-lucidatypewriter-medium-*-*-*-20-*-*-*-*-*-*-*\0");
 
     /*
     **  Setup fore- and back-ground colors.
